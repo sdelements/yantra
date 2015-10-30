@@ -23,7 +23,7 @@ plugin_manager = PluginManager([report_type])
 plugin_manager.get_plugins(report_type)
 ```
 
-You can register multiple plugin types. Alternate way to register plugin types is as follows:
+You can register multiple plugin types. An alternate way to register plugin types is as follows:
 
 ```python
 plugin_manager = PluginManager()
