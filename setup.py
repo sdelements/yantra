@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='yantra',
-    version='0.1',
+    version='0.2',
     description='A plugin framework',
     url='',
     author='Hanif Virani',
