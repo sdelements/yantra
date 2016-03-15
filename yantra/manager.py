@@ -119,8 +119,11 @@ class PluginManager(object):
         except KeyError:
             raise AssertionError("No plugins found for type: {0}: ".format(plugin_type))
 
-    def get_errors(self, plugin_type):
-        return self._get_container(plugin_type).errors
+    def get_errors(self, *plugin_types):
+        errors = {}
+        for plugin_type in plugin_types:
+            errors.update(self._get_container(plugin_type).errors)
+        return errors
 
     def register_plugin_type(self, plugin_type):
         assert isinstance(plugin_type, PluginType)
