@@ -8,10 +8,10 @@ class PluginType(object):
     A plugin type.
     """
 
-    def __init__(self, name, base_class, path):
+    def __init__(self, name, base_class, paths):
         self.name = name
         self.base_class = base_class
-        self.path = path
+        self.paths = [paths] if isinstance(paths, basestring) else paths
 
 
 class PluginContainer(object):
@@ -42,11 +42,17 @@ class PluginContainer(object):
         self._plugins.append(plugin_cls())
 
     def _get_modules(self):
-        """Discover all modules in the path"""
+        """Discover all modules in the path(s)"""
         plugin_modules = []
 
+        for path in self.plugin_type.paths:
+            self.populate_plugin_modules_from_path(path, plugin_modules)
+
+        return plugin_modules
+
+    def populate_plugin_modules_from_path(self, path, plugin_modules):
         # walk the plugins folder
-        for root, subdir, files in os.walk(self.plugin_type.path):
+        for root, subdir, files in os.walk(path):
 
             # check all sub directories
             for directory in subdir:
@@ -60,8 +66,6 @@ class PluginContainer(object):
                     if ext == ".py":
                         fp, path, desc = imp.find_module(modname, [directory_path])
                         plugin_modules.append((modname, fp, path, desc,))
-
-        return plugin_modules
 
     def get_plugins(self):
         """Discover all plugins of the set plugin type in the path"""
