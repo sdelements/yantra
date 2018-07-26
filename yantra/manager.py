@@ -2,16 +2,10 @@ import imp
 import inspect
 import os
 
+from collections import namedtuple
 
-class PluginType(object):
-    """
-    A plugin type.
-    """
 
-    def __init__(self, name, base_class, path):
-        self.name = name
-        self.base_class = base_class
-        self.path = path
+PluginType = namedtuple('PluginType', ['name', 'base_class', 'path'])
 
 
 class PluginContainer(object):
