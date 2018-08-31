@@ -61,10 +61,8 @@ class PluginContainer(object):
         """Discover all plugins of the set plugin type in the path"""
         modules = self._get_modules()
 
-        # load plugins again only if a plugin was added or removed
-        if len(modules) == len(self._plugins):
-            return self._plugins
-
+        # TODO: be smarter about checking if modules have changed
+        #       and reload only if modules are modified.
         self._plugins = []
 
         for plugin_module in modules:
