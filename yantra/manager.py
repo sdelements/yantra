@@ -59,7 +59,15 @@ class PluginContainer(object):
 
     def get_plugins(self):
         """Discover all plugins of the set plugin type in the path"""
-        modules = self._get_modules()
+        # ignore __init__ as they are never registered as plugins and
+        # their inclusion in `modules` will cause `len(modules)` to
+        # never equal `len(self._plugins)`, thus reloading all plugins
+        # each time this method is called.
+        modules = [
+            module
+            for module in self._get_modules()
+            if module[0] != '__init__'
+        ]
 
         # load plugins again only if a plugin was added or removed
         if len(modules) == len(self._plugins):
