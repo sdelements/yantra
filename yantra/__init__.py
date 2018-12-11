@@ -1,1 +1,1 @@
-from manager import PluginManager, PluginType
+from manager import PluginManager, PluginType  # noqa
