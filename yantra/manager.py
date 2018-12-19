@@ -132,3 +132,6 @@ class PluginManager(object):
 
     def has_plugins(self, plugin_type):
         return bool(self.get_plugins(plugin_type))
+
+    def get_plugin(self, plugin_type, plugin_id):
+        return next((plugin for plugin in self.get_plugins(plugin_type) if plugin.id == plugin_id), None)
