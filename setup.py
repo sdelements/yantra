@@ -3,7 +3,7 @@ from setuptools import setup
 
 setup(
     name='yantra',
-    version='0.3',
+    version='0.4',
     description='A plugin framework',
     url='',
     author='Hanif Virani',
