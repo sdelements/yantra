@@ -1,8 +1,9 @@
 from setuptools import setup
 
+
 setup(
     name='yantra',
-    version='0.2',
+    version='0.3',
     description='A plugin framework',
     url='',
     author='Hanif Virani',
@@ -10,4 +11,5 @@ setup(
     packages=['yantra'],
     install_requires=[
     ],
+    python_requires='>=2.7',
 )
