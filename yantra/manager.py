@@ -39,8 +39,18 @@ class PluginContainer(object):
         """Discover all modules in the path"""
         plugin_modules = []
 
+        if isinstance(self.plugin_type.path, list):
+           for p in self.plugin_type.path:
+               plugin_modules = self._get_modules_in_path(plugin_modules, p)
+        else:
+           plugin_modules = self._get_modules_in_path(plugin_modules, self.plugin_type.path)
+
+        return plugin_modules
+
+    def _get_modules_in_path(self, plugin_modules, plugin_path):
+
         # walk the plugins folder
-        for root, subdir, files in os.walk(self.plugin_type.path):
+        for root, subdir, files in os.walk(plugin_path):
 
             # check all sub directories
             for directory in subdir:
