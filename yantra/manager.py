@@ -4,6 +4,13 @@ import os
 
 from collections import namedtuple
 
+# For Python 2 & 3 compatibility with error strings
+# Should be removed when all codebases using yantra are
+# upgraded to Python 3
+try:
+    unicode
+except NameError:
+    unicode = str
 
 PluginType = namedtuple('PluginType', ['name', 'base_class', 'path'])
 
@@ -74,7 +81,9 @@ class PluginContainer(object):
                 # load the module and look for classes
                 module = imp.load_module(modname, fp, path, desc)
             except Exception as e:
-                error_msg = e.__class__.__name__ + ': ' + e.message
+                error_msg = "{exception}: {message}".format(
+                            exception=e.__class__.__name__,
+                            message=unicode(e))
                 self._errors[fp.name] = error_msg
                 continue
 
