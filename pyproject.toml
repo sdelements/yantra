@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "yantra"
+version = "0.5.0"
+description = ""
+authors = ["Security Compass <contact@securitycompass.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+pytest = "^8.2.1"
+
+[tool.poetry.dev-dependencies]
+pytest = "^8.2.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
