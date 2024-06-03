@@ -6,7 +6,7 @@ on:
       - develop
       - master
       - main
-      - 'releases/**'
+      - 'release/**'
   pull_request:
     branches:
       - '*'
