@@ -1,2 +1,2 @@
 lint:
-	find . -name '*.py' | egrep -v './doc' | xargs flake8 --ignore=E501,W601
+	flake8 . --extend-ignore=D,E501,W601 --extend-exclude=docs/ --statistics --count

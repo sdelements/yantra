@@ -1,21 +1,12 @@
-import imp
 import inspect
 import os
-
 from collections import namedtuple
+from importlib.util import module_from_spec, spec_from_file_location
 
-# For Python 2 & 3 compatibility with error strings
-# Should be removed when all codebases using yantra are
-# upgraded to Python 3
-try:
-    unicode
-except NameError:
-    unicode = str
-
-PluginType = namedtuple('PluginType', ['name', 'base_class', 'path'])
+PluginType = namedtuple("PluginType", ["name", "base_class", "path"])
 
 
-class PluginContainer(object):
+class PluginContainer:
     """
     A plugin container.
 
@@ -47,20 +38,13 @@ class PluginContainer(object):
         plugin_modules = []
 
         # walk the plugins folder
-        for root, subdir, files in os.walk(self.plugin_type.path):
-
-            # check all sub directories
-            for directory in subdir:
-
-                directory_path = os.path.join(root, directory)
-                directory_list = os.listdir(directory_path)
-
-                for filename in directory_list:
-                    modname, ext = os.path.splitext(filename)
-
-                    if ext == ".py":
-                        fp, path, desc = imp.find_module(modname, [directory_path])
-                        plugin_modules.append((modname, fp, path, desc,))
+        for root, _, files in os.walk(self.plugin_type.path):
+            for filename in files:
+                modname, ext = os.path.splitext(filename)
+                if ext == ".py":
+                    filepath = os.path.join(root, filename)
+                    spec = spec_from_file_location(modname, filepath)
+                    plugin_modules.append((modname, spec))
 
         return plugin_modules
 
@@ -74,37 +58,31 @@ class PluginContainer(object):
 
         self._plugins = []
 
-        for plugin_module in modules:
-            modname, fp, path, desc = plugin_module
-
+        for _modname, spec in modules:
             try:
                 # load the module and look for classes
-                module = imp.load_module(modname, fp, path, desc)
+                module = module_from_spec(spec)
+                spec.loader.exec_module(module)
             except Exception as e:
-                error_msg = "{exception}: {message}".format(
-                            exception=e.__class__.__name__,
-                            message=unicode(e))
-                self._errors[fp.name] = error_msg
+                error_msg = f"{e.__class__.__name__}: {str(e)}"
+                self._errors[spec.origin] = error_msg
                 continue
 
             classes_in_module = inspect.getmembers(module, inspect.isclass)
 
-            for cls in classes_in_module:
-                cls = cls[1]
-
+            for _, cls in classes_in_module:
                 # ignore if it's the base plugin class
                 if cls.__name__ == self.plugin_type.base_class.__name__:
                     continue
 
-                # make sure that the class is a subclass of the plugin's
-                # base class
-                if self.plugin_type.base_class in cls.__bases__:
+                # make sure that the class is a subclass of the plugin's base class
+                if issubclass(cls, self.plugin_type.base_class):
                     self.register_plugin(cls)
 
         return self._plugins
 
 
-class PluginManager(object):
+class PluginManager:
     """
     Manager class to interact with plugins.
     """
@@ -120,7 +98,7 @@ class PluginManager(object):
         try:
             return self._containers[plugin_type.name]
         except KeyError:
-            raise AssertionError("No plugins found for type: {0}: ".format(plugin_type))
+            raise AssertionError(f"No plugins found for type: {plugin_type}")
 
     def get_errors(self, *plugin_types):
         errors = {}
@@ -129,7 +107,8 @@ class PluginManager(object):
         return errors
 
     def register_plugin_type(self, plugin_type):
-        assert isinstance(plugin_type, PluginType)
+        if not isinstance(plugin_type, PluginType):
+            raise TypeError("plugin_type must be an instance of PluginType")
 
         if plugin_type.name in self._containers:
             raise AssertionError("Plugin type with that name already exists")
@@ -143,4 +122,11 @@ class PluginManager(object):
         return bool(self.get_plugins(plugin_type))
 
     def get_plugin(self, plugin_type, plugin_id):
-        return next((plugin for plugin in self.get_plugins(plugin_type) if plugin.id == plugin_id), None)
+        return next(
+            (
+                plugin
+                for plugin in self.get_plugins(plugin_type)
+                if getattr(plugin, "id", None) == plugin_id
+            ),
+            None,
+        )
