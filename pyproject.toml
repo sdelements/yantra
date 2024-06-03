@@ -27,7 +27,8 @@ classifiers=[
     'Programming Language :: Python :: 3.12',
 ]
 packages = [
-  { include = "yantra" }
+  { include = "yantra" },
+  { include = "tests", format = "sdist" },
 ]
 exclude = [
   "yantra/**/tests",
