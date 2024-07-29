@@ -39,7 +39,7 @@ exclude = [
 python = "~3.12"
 
 [tool.poetry.dev-dependencies]
-pre-commit = "3.7.1"
+pre-commit = "3.8.0"
 # lint
 black = "24.4.2"
 flake8 = "7.0.0"
