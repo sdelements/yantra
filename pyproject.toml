@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "yantra"
-version = "0.6.0"
+version = "0.7.0"
 homepage = "https://github.com/sdelements/yantra"
 description = "A plugin framework"
 authors = ["Security Compass <contact@securitycompass.com>"]
